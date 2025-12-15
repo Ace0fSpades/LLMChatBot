@@ -14,7 +14,7 @@
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_user WHERE usename = 'chat_app_user') THEN
-        CREATE USER chat_app_user WITH PASSWORD 'your_password_here';
+        CREATE USER chat_app_user WITH PASSWORD '1234';
         RAISE NOTICE 'User chat_app_user created';
     ELSE
         RAISE NOTICE 'User chat_app_user already exists';

@@ -15,6 +15,11 @@ import (
 // DB is the global database instance
 var DB *gorm.DB
 
+// GetDB returns the global database instance
+func GetDB() *gorm.DB {
+	return DB
+}
+
 // Connect initializes database connection
 func Connect(cfg *config.Config) error {
 	var err error

@@ -12,7 +12,7 @@ type ChatSession struct {
 	ID         uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	UserID     uuid.UUID `gorm:"type:uuid;index;not null"`
 	Title      string    `gorm:"default:'New Chat';size:255"`
-	ModelUsed  string    `gorm:"default:'phi-3-mini';size:100"`
+	ModelUsed  string    `gorm:"default:'qwen2.5-3b';size:100"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	IsArchived bool `gorm:"default:false"`

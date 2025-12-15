@@ -30,7 +30,7 @@ func (s *ChatService) CreateChatSession(userID uuid.UUID, req *dto.CreateChatSes
 
 	modelUsed := req.ModelUsed
 	if modelUsed == "" {
-		modelUsed = "phi-3-mini"
+		modelUsed = "qwen2.5-3b"
 	}
 
 	session := &model.ChatSession{

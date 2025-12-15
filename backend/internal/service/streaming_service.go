@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -75,7 +76,7 @@ func (s *StreamingService) StreamGeneration(sessionID uuid.UUID, message string,
 		}
 
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Accept", "text/event-stream")
+		req.Header.Set("Accept", "application/x-ndjson")
 
 		// Execute request
 		resp, err := s.llmClient.Do(req)
@@ -90,18 +91,24 @@ func (s *StreamingService) StreamGeneration(sessionID uuid.UUID, message string,
 			return
 		}
 
-		// Read streaming response
-		decoder := json.NewDecoder(resp.Body)
+		// Read NDJSON (newline-delimited JSON) streaming response
+		// ML Service → Backend: NDJSON format (each line is a JSON object)
+		scanner := bufio.NewScanner(resp.Body)
 		var fullResponse strings.Builder
 		totalTokens := 0
 
-		for {
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+
+			// Skip empty lines
+			if line == "" {
+				continue
+			}
+
+			// Parse JSON line (NDJSON format: each line is a complete JSON object)
 			var tokenResp TokenResponse
-			if err := decoder.Decode(&tokenResp); err != nil {
-				if err == io.EOF {
-					break
-				}
-				errChan <- fmt.Errorf("failed to decode response: %w", err)
+			if err := json.Unmarshal([]byte(line), &tokenResp); err != nil {
+				errChan <- fmt.Errorf("failed to decode NDJSON response: %w", err)
 				return
 			}
 
@@ -115,10 +122,23 @@ func (s *StreamingService) StreamGeneration(sessionID uuid.UUID, message string,
 				break
 			}
 
+			if tokenResp.Type == "error" {
+				errChan <- fmt.Errorf("LLM service error: %s", tokenResp.Content)
+				return
+			}
+
 			// Accumulate tokens
 			fullResponse.WriteString(tokenResp.Content)
 			totalTokens = tokenResp.Tokens
 			tokenChan <- tokenResp
+		}
+
+		// Check for scanner errors
+		if err := scanner.Err(); err != nil {
+			if err != io.EOF {
+				errChan <- fmt.Errorf("failed to read NDJSON stream: %w", err)
+				return
+			}
 		}
 	}()
 
