@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Create chat modal props
@@ -17,6 +18,7 @@ export const CreateChatModal = ({
   onClose,
   onCreate,
 }: CreateChatModalProps) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -38,7 +40,7 @@ export const CreateChatModal = ({
    */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const finalTitle = title.trim() || 'New Chat';
+    const finalTitle = title.trim() || t('chat.newChat').replace('+ ', '');
     onCreate(finalTitle);
     setTitle('');
     onClose();
@@ -77,31 +79,28 @@ export const CreateChatModal = ({
     <div className="modal-overlay" onClick={handleCancel}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Создать новый чат</h2>
+          <h2>{t('modals.createChat')}</h2>
           <button
             className="modal-close"
             onClick={handleCancel}
-            title="Закрыть"
+            title={t('common.close')}
           >
             ×
           </button>
         </div>
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
-            <label htmlFor="chat-title">Название чата</label>
+            <label htmlFor="chat-title">{t('modals.chatTitle')}</label>
             <input
               id="chat-title"
               ref={inputRef}
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Введите название (необязательно)"
+              placeholder={t('modals.chatTitlePlaceholder')}
               maxLength={255}
               autoFocus
             />
-            <p className="form-hint">
-              Оставьте пустым для использования "New Chat"
-            </p>
           </div>
           <div className="modal-actions">
             <button
@@ -109,10 +108,10 @@ export const CreateChatModal = ({
               className="btn-secondary"
               onClick={handleCancel}
             >
-              Отмена
+              {t('common.cancel')}
             </button>
             <button type="submit" className="btn-primary">
-              Создать
+              {t('modals.create')}
             </button>
           </div>
         </form>

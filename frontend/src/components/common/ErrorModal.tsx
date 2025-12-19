@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { clearError, selectError } from '@/stores';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Error modal component for displaying errors
@@ -8,6 +9,7 @@ import { useEffect } from 'react';
 export const ErrorModal = () => {
   const dispatch = useAppDispatch();
   const error = useAppSelector(selectError);
+  const { t } = useTranslation();
 
   /**
    * Handle closing error modal
@@ -40,11 +42,11 @@ export const ErrorModal = () => {
     <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content error-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{error.title || 'Ошибка'}</h2>
+          <h2>{error.title || t('common.error')}</h2>
           <button
             className="modal-close"
             onClick={handleClose}
-            title="Закрыть"
+            title={t('common.close')}
           >
             ×
           </button>
@@ -58,7 +60,7 @@ export const ErrorModal = () => {
             className="btn-primary"
             onClick={handleClose}
           >
-            Закрыть
+            {t('common.close')}
           </button>
         </div>
       </div>

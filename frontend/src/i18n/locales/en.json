@@ -1,0 +1,89 @@
+{
+  "common": {
+    "appName": "LLM ChatBot",
+    "loading": "Loading...",
+    "error": "Error",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "restore": "Restore",
+    "archive": "Archive",
+    "selectAll": "Select all",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "username": "Username",
+    "loginTitle": "Login",
+    "registerTitle": "Registration",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginError": "Login failed",
+    "registerError": "Registration failed",
+    "passwordsNotMatch": "Passwords do not match",
+    "guestMode": "Exit guest mode",
+    "guest": "Guest"
+  },
+  "welcome": {
+    "title": "Welcome to LLM ChatBot",
+    "description": "Choose how to use the application",
+    "loginRegisterTitle": "Login or register",
+    "loginRegisterDescription": "Create an account to save chat history and access your data",
+    "guestTitle": "Guest mode",
+    "guestDescription": "Try the application without registration. Data is not saved and will be deleted when you close the page.",
+    "useGuestAccount": "Use guest account"
+  },
+  "chat": {
+    "newChat": "+ New chat",
+    "noChats": "No chats. Create a new one!",
+    "selectChat": "Select a chat or create a new one",
+    "sendMessage": "Send",
+    "messagePlaceholder": "Enter a message... (Enter to send, Shift+Enter for new line)",
+    "you": "You",
+    "assistant": "Assistant",
+    "incompleteMessage": "(incomplete)",
+    "incompleteTooltip": "Message was truncated due to token limit or error"
+  },
+  "chatHistory": {
+    "archivedChats": "Archived chats",
+    "noArchivedChats": "No archived chats",
+    "restoreSelected": "Restore",
+    "deleteSelected": "Delete",
+    "confirmDelete": "Are you sure you want to delete {{count}} chat(s)? This action cannot be undone.",
+    "archiveTooltip": "Archive"
+  },
+  "modals": {
+    "createChat": "Create new chat",
+    "chatTitle": "Chat title",
+    "chatTitlePlaceholder": "Enter chat title",
+    "create": "Create"
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "reloadPage": "Reload page",
+    "loadMessages": "Loading messages",
+    "loadChat": "Loading chat",
+    "createChat": "Creating chat",
+    "archiveChat": "Archiving chat",
+    "restoreChats": "Restoring chats",
+    "deleteChats": "Deleting chats",
+    "getResponse": "Getting response",
+    "startStream": "Starting stream",
+    "reloadMessages": "Reloading messages",
+    "reloadMessagesAfterError": "Reloading messages after error",
+    "loadArchivedChats": "Loading archived chats"
+  },
+  "language": {
+    "switch": "Switch language",
+    "russian": "Russian",
+    "english": "English"
+  }
+}
+

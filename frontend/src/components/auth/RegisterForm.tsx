@@ -1,13 +1,16 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
+import styles from './RegisterForm.module.scss';
 
 /**
  * Registration form component
  */
 export const RegisterForm = () => {
   const navigate = useNavigate();
-  const { register, loading, error } = useAuth();
+  const { register, loading, error, isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -29,17 +32,23 @@ export const RegisterForm = () => {
     }
   };
 
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate('/chat');
+    return null;
+  }
+
   return (
-    <div className="auth-container">
-      <div className="auth-form">
-        <h2>Регистрация</h2>
+    <div className={styles['auth-container']}>
+      <div className={styles['auth-form']}>
+        <h2>{t('auth.registerTitle')}</h2>
         {error && <div className="error-message">{error}</div>}
         {password !== confirmPassword && confirmPassword && (
-          <div className="error-message">Пароли не совпадают</div>
+          <div className="error-message">{t('auth.passwordsNotMatch')}</div>
         )}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('auth.email')}</label>
             <input
               type="email"
               id="email"
@@ -50,7 +59,7 @@ export const RegisterForm = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="username">Имя пользователя</label>
+            <label htmlFor="username">{t('auth.username')}</label>
             <input
               type="text"
               id="username"
@@ -63,7 +72,7 @@ export const RegisterForm = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Пароль</label>
+            <label htmlFor="password">{t('auth.password')}</label>
             <input
               type="password"
               id="password"
@@ -75,7 +84,7 @@ export const RegisterForm = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="confirmPassword">Подтвердите пароль</label>
+            <label htmlFor="confirmPassword">{t('auth.confirmPassword')}</label>
             <input
               type="password"
               id="confirmPassword"
@@ -90,11 +99,11 @@ export const RegisterForm = () => {
             disabled={loading || password !== confirmPassword}
             className="btn-primary"
           >
-            {loading ? 'Регистрация...' : 'Зарегистрироваться'}
+            {loading ? t('common.loading') : t('auth.register')}
           </button>
         </form>
-        <p className="auth-link">
-          Уже есть аккаунт? <a href="/login">Войти</a>
+        <p className={styles['auth-link']}>
+          {t('auth.hasAccount')} <a href="/login">{t('auth.login')}</a>
         </p>
       </div>
     </div>

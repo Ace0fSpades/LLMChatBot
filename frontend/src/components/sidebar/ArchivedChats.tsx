@@ -14,6 +14,7 @@ import { ArchivedChatItem } from './ArchivedChatItem';
 import { LoadingSpinner } from '@/components/common';
 import { useArchivedChatsSelectors } from './ArchivedChats.selectors';
 import { handleError } from '@/utils/errorHandler';
+import styles from './ArchivedChats.module.scss';
 
 /**
  * Archived chats component
@@ -21,6 +22,7 @@ import { handleError } from '@/utils/errorHandler';
 export const ArchivedChats = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch();
   const { archivedSessions, loading, currentSession } = useArchivedChatsSelectors();
+  const { t } = useTranslation();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -34,11 +36,11 @@ export const ArchivedChats = ({ onClose }: { onClose: () => void }) => {
       const archived = sessions.filter((s) => s.is_archived);
       dispatch(setArchivedSessions(archived));
     } catch (error) {
-      handleError(error, 'Загрузка архивированных чатов');
+      handleError(error, t('errors.loadArchivedChats'));
     } finally {
       dispatch(setArchivedLoading(false));
     }
-  }, [dispatch]);
+  }, [dispatch, t]);
 
   /**
    * Load archived sessions on mount
@@ -72,10 +74,10 @@ export const ArchivedChats = ({ onClose }: { onClose: () => void }) => {
         dispatch(setCurrentSession(session));
         // Don't close archived chats panel when viewing a session
       } catch (error) {
-        handleError(error, 'Загрузка чата');
+        handleError(error, t('errors.loadChat'));
       }
     },
-    [dispatch]
+    [dispatch, t]
   );
 
   /**
@@ -105,11 +107,11 @@ export const ArchivedChats = ({ onClose }: { onClose: () => void }) => {
       }
       setSelectedIds(new Set());
     } catch (error) {
-      handleError(error, 'Восстановление чатов');
+      handleError(error, t('errors.restoreChats'));
     } finally {
       setIsProcessing(false);
     }
-  }, [selectedIds, dispatch]);
+  }, [selectedIds, dispatch, t]);
 
   /**
    * Handle deleting selected sessions
@@ -119,7 +121,7 @@ export const ArchivedChats = ({ onClose }: { onClose: () => void }) => {
 
     const ids = Array.from(selectedIds);
     const confirmed = window.confirm(
-      `Вы уверены, что хотите удалить ${ids.length} чат(ов)? Это действие нельзя отменить.`
+      t('chatHistory.confirmDelete', { count: ids.length })
     );
 
     if (!confirmed) return;
@@ -150,11 +152,11 @@ export const ArchivedChats = ({ onClose }: { onClose: () => void }) => {
       }
       setSelectedIds(new Set());
     } catch (error) {
-      handleError(error, 'Удаление чатов');
+      handleError(error, t('errors.deleteChats'));
     } finally {
       setIsProcessing(false);
     }
-  }, [selectedIds, dispatch, currentSession]);
+  }, [selectedIds, dispatch, currentSession, t]);
 
   /**
    * Handle select all
@@ -171,43 +173,43 @@ export const ArchivedChats = ({ onClose }: { onClose: () => void }) => {
   const allSelected = archivedSessions.length > 0 && selectedIds.size === archivedSessions.length;
 
   return (
-    <div className="archived-chats">
-      <div className="archived-chats-header">
-        <h2>Архивированные чаты</h2>
+    <div className={styles['archived-chats']}>
+      <div className={styles['archived-chats-header']}>
+        <h2>{t('chatHistory.archivedChats')}</h2>
         <button
-          className="archived-chats-close"
+          className={styles['archived-chats-close']}
           onClick={onClose}
-          title="Закрыть"
+          title={t('common.close')}
         >
           ×
         </button>
       </div>
 
       {archivedSessions.length > 0 && (
-        <div className="archived-chats-toolbar">
-          <label className="archived-chats-select-all">
+        <div className={styles['archived-chats-toolbar']}>
+          <label className={styles['archived-chats-select-all']}>
             <input
               type="checkbox"
               checked={allSelected}
               onChange={handleSelectAll}
             />
-            <span>Выбрать все</span>
+            <span>{t('common.selectAll')}</span>
           </label>
           {hasSelection && (
-            <div className="archived-chats-actions">
+            <div className={styles['archived-chats-actions']}>
               <button
-                className="btn-secondary archived-chats-restore"
+                className={`btn-secondary ${styles['archived-chats-restore']}`}
                 onClick={handleRestore}
                 disabled={isProcessing}
               >
-                Восстановить ({selectedIds.size})
+                {t('chatHistory.restoreSelected')} ({selectedIds.size})
               </button>
               <button
-                className="btn-secondary archived-chats-delete"
+                className={`btn-secondary ${styles['archived-chats-delete']}`}
                 onClick={handleDelete}
                 disabled={isProcessing}
               >
-                Удалить ({selectedIds.size})
+                {t('chatHistory.deleteSelected')} ({selectedIds.size})
               </button>
             </div>
           )}
@@ -217,10 +219,10 @@ export const ArchivedChats = ({ onClose }: { onClose: () => void }) => {
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <div className="archived-chats-list">
+        <div className={styles['archived-chats-list']}>
           {archivedSessions.length === 0 ? (
-            <div className="archived-chats-empty">
-              <p>Нет архивированных чатов</p>
+            <div className={styles['archived-chats-empty']}>
+              <p>{t('chatHistory.noArchivedChats')}</p>
             </div>
           ) : (
             archivedSessions.map((session) => (

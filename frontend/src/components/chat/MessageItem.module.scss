@@ -1,0 +1,61 @@
+@use '@/styles/variables' as *;
+
+.message-item {
+  display: flex;
+  margin-bottom: $spacing-md;
+
+  &.message-user {
+    justify-content: flex-end;
+  }
+
+  &.message-assistant {
+    justify-content: flex-start;
+  }
+}
+
+.message-content {
+  max-width: 70%;
+  padding: 0.75rem $spacing-md;
+  border-radius: $radius-md;
+}
+
+.message-user .message-content {
+  background-color: $primary-color;
+  color: $white;
+}
+
+.message-assistant .message-content {
+  background-color: #f0f0f0;
+  color: $text-color;
+}
+
+.message-role {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: $spacing-xs;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.message-incomplete-badge {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: $warning-color;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.message-text {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.message-time {
+  font-size: 0.75rem;
+  margin-top: $spacing-sm;
+  opacity: 0.7;
+}
+

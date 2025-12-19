@@ -1,0 +1,70 @@
+@use '@/styles/variables' as *;
+
+.language-switcher {
+  position: relative;
+  display: inline-block;
+}
+
+.language-button {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  background-color: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: all $transition-fast;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: $background-color;
+    border-color: $primary-color;
+  }
+}
+
+.language-icon {
+  font-size: 1rem;
+}
+
+.language-code {
+  font-weight: 500;
+  color: $text-color;
+}
+
+.language-dropdown {
+  position: absolute;
+  top: calc(100% + $spacing-xs);
+  right: 0;
+  background-color: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-md;
+  min-width: 150px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.language-option {
+  display: block;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  font-size: 0.9rem;
+  color: $text-color;
+
+  &:hover {
+    background-color: $background-color;
+  }
+
+  &.active {
+    background-color: #e3f2fd;
+    color: $primary-color;
+    font-weight: 500;
+  }
+}
+

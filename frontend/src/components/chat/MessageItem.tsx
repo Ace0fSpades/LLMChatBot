@@ -3,8 +3,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTranslation } from 'react-i18next';
 import type { Components } from 'react-markdown';
 import type { Message } from '@/types/message.types';
+import styles from './MessageItem.module.scss';
 
 /**
  * Message item props
@@ -37,21 +39,29 @@ const decodeContent = (content: string): string => {
  * Message item component with Markdown support
  */
 export const MessageItem = ({ message }: MessageItemProps) => {
+  const { t, i18n } = useTranslation();
   const isUser = message.role === 'user';
   const decodedContent = decodeContent(message.content);
 
   return (
-    <div className={`message-item ${isUser ? 'message-user' : 'message-assistant'}`}>
-      <div className="message-content">
-        <div className="message-role">
-          {isUser ? 'Вы' : 'Ассистент'}
+    <div
+      className={`${styles['message-item']} ${
+        isUser ? styles['message-user'] : styles['message-assistant']
+      }`}
+    >
+      <div className={styles['message-content']}>
+        <div className={styles['message-role']}>
+          {isUser ? t('chat.you') : t('chat.assistant')}
           {!isUser && message.is_incomplete && (
-            <span className="message-incomplete-badge" title="Сообщение было обрезано из-за ограничения токенов или ошибки">
-              (неполное)
+            <span
+              className={styles['message-incomplete-badge']}
+              title={t('chat.incompleteTooltip')}
+            >
+              {t('chat.incompleteMessage')}
             </span>
           )}
         </div>
-        <div className="message-text">
+        <div className={styles['message-text']}>
           {isUser ? (
             // User messages: plain text (no Markdown)
             <span>{decodedContent}</span>
@@ -64,7 +74,7 @@ export const MessageItem = ({ message }: MessageItemProps) => {
                   const match = /language-(\w+)/.exec(className || '');
                   const language = match ? match[1] : '';
                   const isInline = !className || !match;
-                  
+
                   return !isInline && language ? (
                     <SyntaxHighlighter
                       style={oneDark as Record<string, React.CSSProperties>}
@@ -85,11 +95,14 @@ export const MessageItem = ({ message }: MessageItemProps) => {
             </ReactMarkdown>
           )}
         </div>
-        <div className="message-time">
-          {new Date(message.created_at).toLocaleTimeString('ru-RU', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
+        <div className={styles['message-time']}>
+          {new Date(message.created_at).toLocaleTimeString(
+            i18n.language === 'ru' ? 'ru-RU' : 'en-US',
+            {
+              hour: '2-digit',
+              minute: '2-digit',
+            }
+          )}
         </div>
       </div>
     </div>

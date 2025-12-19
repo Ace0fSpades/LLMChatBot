@@ -9,6 +9,7 @@ const selectAuthState = (state: RootState): AuthState => state.auth;
 
 export const selectIsAuthenticated = (state: RootState) =>
   state.auth.isAuthenticated;
+export const selectIsGuest = (state: RootState) => state.auth.isGuest;
 export const selectAccessToken = (state: RootState) => state.auth.accessToken;
 export const selectRefreshToken = (state: RootState) => state.auth.refreshToken;
 export const selectAuthLoading = (state: RootState) => state.auth.loading;
@@ -21,6 +22,7 @@ export const selectAuthStateData = createSelector(
   [selectAuthState],
   (authState) => ({
     isAuthenticated: authState.isAuthenticated,
+    isGuest: authState.isGuest,
     accessToken: authState.accessToken,
     refreshToken: authState.refreshToken,
     loading: authState.loading,

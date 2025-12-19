@@ -1,0 +1,115 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  @include flex-center;
+  z-index: $z-modal;
+  animation: fadeIn $transition-fast ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: $white;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp $transition-normal ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $text-color;
+  }
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: $text-muted;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  @include flex-center;
+  border-radius: $radius-sm;
+  transition: all $transition-fast;
+
+  &:hover {
+    background-color: $background-color;
+    color: $text-color;
+  }
+}
+
+.modal-form {
+  padding: $spacing-lg;
+
+  .form-group {
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: $spacing-lg;
+
+  button {
+    min-width: 100px;
+  }
+}
+
+.error-modal {
+  max-width: 450px;
+}
+
+.modal-body {
+  padding: $spacing-lg;
+}
+
+.modal-body .error-message {
+  color: $text-color;
+  line-height: 1.6;
+  margin: 0;
+  word-wrap: break-word;
+}
+

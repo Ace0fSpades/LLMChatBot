@@ -1,0 +1,91 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.welcome-container {
+  display: flex;
+  @include flex-center;
+  min-height: calc(100vh - 80px);
+  padding: $spacing-xl;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.welcome-content {
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+}
+
+.welcome-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $white;
+  margin-bottom: $spacing-md;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-description {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 3rem;
+}
+
+.welcome-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-xl;
+  margin-top: $spacing-xl;
+}
+
+.welcome-card {
+  @include card;
+  padding: $spacing-xl;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-xl;
+  }
+
+  &.guest-card {
+    border: 2px solid $warning-color;
+  }
+}
+
+.welcome-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $text-color;
+  margin-bottom: $spacing-md;
+}
+
+.welcome-card-description {
+  color: $text-secondary;
+  line-height: 1.6;
+  margin-bottom: $spacing-lg;
+  flex: 1;
+}
+
+.welcome-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.welcome-btn {
+  width: 100%;
+  padding: 0.75rem $spacing-lg;
+  font-size: 1rem;
+  font-weight: 500;
+
+  &.guest-btn {
+    background: linear-gradient(135deg, $warning-color 0%, $warning-hover 100%);
+    border: none;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, $warning-hover 0%, #e65100 100%);
+    }
+  }
+}
+

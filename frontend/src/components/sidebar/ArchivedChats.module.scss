@@ -1,0 +1,140 @@
+@use '@/styles/variables' as *;
+
+.archived-chats {
+  width: 300px;
+  background-color: $white;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.archived-chats-header {
+  padding: $spacing-md;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $text-color;
+    margin: 0;
+  }
+}
+
+.archived-chats-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: $text-muted;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: $text-color;
+  }
+}
+
+.archived-chats-toolbar {
+  padding: 0.75rem $spacing-md;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.archived-chats-select-all {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: $text-secondary;
+
+  input[type='checkbox'] {
+    cursor: pointer;
+  }
+}
+
+.archived-chats-actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.archived-chats-restore,
+.archived-chats-delete {
+  flex: 1;
+  padding: $spacing-sm;
+  font-size: 0.85rem;
+}
+
+.archived-chats-delete {
+  background-color: $danger-color;
+  color: $white;
+
+  &:hover:not(:disabled) {
+    background-color: $danger-hover;
+  }
+}
+
+.archived-chats-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-sm;
+}
+
+.archived-chats-empty {
+  padding: $spacing-xl;
+  text-align: center;
+  color: $text-muted;
+}
+
+.archived-chat-item {
+  padding: 0.75rem;
+  margin-bottom: $spacing-sm;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &:hover {
+    background-color: $background-color;
+  }
+}
+
+.archived-chat-item-checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.archived-chat-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.archived-chat-item-title {
+  font-weight: 500;
+  margin-bottom: $spacing-xs;
+  color: $text-color;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archived-chat-item-meta {
+  font-size: 0.85rem;
+  color: $text-muted;
+}
+

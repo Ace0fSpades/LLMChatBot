@@ -8,6 +8,8 @@ import { ArchivedChats } from './ArchivedChats';
 import { LoadingSpinner, CreateChatModal } from '@/components/common';
 import { useChatHistorySelectors } from './ChatHistory.selectors';
 import { handleError } from '@/utils/errorHandler';
+import { useTranslation } from 'react-i18next';
+import styles from './ChatHistory.module.scss';
 
 /**
  * Chat history sidebar component
@@ -16,6 +18,7 @@ export const ChatHistory = () => {
   const dispatch = useAppDispatch();
   const { sessions, currentSession, loading } = useChatHistorySelectors();
   const { createSession, archiveSession } = useChatHistory();
+  const { t } = useTranslation();
   const [showArchived, setShowArchived] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -27,7 +30,7 @@ export const ChatHistory = () => {
       const session = await chatApi.getChatSession(sessionId, true);
       dispatch(setCurrentSession(session));
     } catch (error) {
-      handleError(error, 'Загрузка чата');
+      handleError(error, t('errors.loadChat'));
     }
   };
 
@@ -48,7 +51,7 @@ export const ChatHistory = () => {
         dispatch(setCurrentSession(session));
       }
     } catch (error) {
-      handleError(error, 'Создание чата');
+      handleError(error, t('errors.createChat'));
     }
   };
 
@@ -62,7 +65,7 @@ export const ChatHistory = () => {
         dispatch(setCurrentSession(null));
       }
     } catch (error) {
-      handleError(error, 'Архивирование чата');
+      handleError(error, t('errors.archiveChat'));
     }
   };
 
@@ -72,26 +75,26 @@ export const ChatHistory = () => {
 
   return (
     <>
-      <div className="chat-history">
-        <div className="chat-history-header">
+      <div className={styles['chat-history']}>
+        <div className={styles['chat-history-header']}>
           <button onClick={handleNewChatClick} className="btn-primary">
-            + Новый чат
+            {t('chat.newChat')}
           </button>
           <button
             onClick={() => setShowArchived(true)}
-            className="btn-secondary chat-history-archive-btn"
-            title="Архивированные чаты"
+            className={`btn-secondary ${styles['chat-history-archive-btn']}`}
+            title={t('chatHistory.archivedChats')}
           >
-            📦 Архив
+            📦 {t('common.archive')}
           </button>
         </div>
         {loading ? (
           <LoadingSpinner />
         ) : (
-          <div className="chat-history-list">
+          <div className={styles['chat-history-list']}>
             {sessions.length === 0 ? (
-              <div className="chat-history-empty">
-                <p>Нет чатов. Создайте новый!</p>
+              <div className={styles['chat-history-empty']}>
+                <p>{t('chat.noChats')}</p>
               </div>
             ) : (
               sessions.map((session) => (

@@ -11,13 +11,13 @@ interface PrivateRouteProps {
 }
 
 /**
- * Private route component that requires authentication
+ * Private route component that requires authentication or guest session
  */
 export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;

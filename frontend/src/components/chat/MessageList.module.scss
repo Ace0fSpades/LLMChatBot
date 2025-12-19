@@ -1,0 +1,225 @@
+@use '@/styles/variables' as *;
+
+// Markdown styles for assistant messages
+// Using :global() because these styles apply to dynamically generated markdown content
+:global(.message-assistant) :global(.message-text) {
+  white-space: normal;
+
+  > *:first-child {
+    margin-top: 0;
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Headings
+:global(.message-assistant) :global(.message-text) {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  h1 {
+    font-size: 1.5em;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 0.3em;
+  }
+
+  h2 {
+    font-size: 1.3em;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 0.3em;
+  }
+
+  h3 {
+    font-size: 1.1em;
+  }
+
+  h4 {
+    font-size: 1em;
+  }
+
+  h5 {
+    font-size: 0.9em;
+  }
+
+  h6 {
+    font-size: 0.85em;
+    color: $text-secondary;
+  }
+}
+
+// Paragraphs
+:global(.message-assistant) :global(.message-text) p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+// Lists
+:global(.message-assistant) :global(.message-text) {
+  ul,
+  ol {
+    margin-top: 0;
+    margin-bottom: 1em;
+    padding-left: 2em;
+  }
+
+  li {
+    margin-bottom: $spacing-xs;
+
+    > p {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  ul ul,
+  ol ol,
+  ul ol,
+  ol ul {
+    margin-top: $spacing-xs;
+    margin-bottom: $spacing-xs;
+  }
+}
+
+// Code blocks and inline code
+:global(.message-assistant) :global(.message-text) {
+  code {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: $font-mono;
+  }
+
+  pre {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 1em;
+    border-radius: $radius-sm;
+    overflow-x: auto;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    line-height: 1.45;
+
+    code {
+      background-color: transparent;
+      padding: 0;
+      font-size: 0.85em;
+      white-space: pre;
+      word-wrap: normal;
+    }
+  }
+
+  pre[class*='language-'] {
+    margin: 0.5em 0;
+    padding: 1em;
+    border-radius: $radius-sm;
+    overflow-x: auto;
+
+    code {
+      font-family: $font-mono;
+      font-size: 0.9em;
+      line-height: 1.5;
+    }
+  }
+}
+
+// Links
+:global(.message-assistant) :global(.message-text) a {
+  color: $primary-color;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Blockquotes
+:global(.message-assistant) :global(.message-text) blockquote {
+  margin: 0.5em 0;
+  padding-left: 1em;
+  border-left: 3px solid $border-light;
+  color: $text-secondary;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Tables (GitHub Flavored Markdown)
+:global(.message-assistant) :global(.message-text) table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  display: block;
+  overflow-x: auto;
+
+  th,
+  td {
+    border: 1px solid $border-light;
+    padding: 0.5em 1em;
+    text-align: left;
+  }
+
+  th {
+    background-color: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}
+
+// Horizontal rule
+:global(.message-assistant) :global(.message-text) hr {
+  border: none;
+  border-top: 1px solid $border-light;
+  margin: 1.5em 0;
+}
+
+// Strong and emphasis
+:global(.message-assistant) :global(.message-text) {
+  strong {
+    font-weight: 600;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  del {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+}
+
+// Images
+:global(.message-assistant) :global(.message-text) img {
+  max-width: 100%;
+  height: auto;
+  border-radius: $radius-sm;
+  margin: 0.5em 0;
+}
+

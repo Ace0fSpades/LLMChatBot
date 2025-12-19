@@ -1,0 +1,39 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: $spacing-xl;
+}
+
+.auth-form {
+  @include card;
+  padding: $spacing-xl;
+  width: 100%;
+  max-width: 400px;
+
+  h2 {
+    margin-bottom: $spacing-lg;
+    text-align: center;
+    color: $text-color;
+  }
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: $spacing-md;
+  color: $text-secondary;
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+

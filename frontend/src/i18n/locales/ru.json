@@ -1,0 +1,89 @@
+{
+  "common": {
+    "appName": "LLM ChatBot",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "close": "Закрыть",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "restore": "Восстановить",
+    "archive": "Архив",
+    "selectAll": "Выбрать все",
+    "yes": "Да",
+    "no": "Нет"
+  },
+  "auth": {
+    "login": "Войти",
+    "register": "Зарегистрироваться",
+    "logout": "Выйти",
+    "email": "Email",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "username": "Имя пользователя",
+    "loginTitle": "Вход",
+    "registerTitle": "Регистрация",
+    "noAccount": "Нет аккаунта?",
+    "hasAccount": "Уже есть аккаунт?",
+    "loginError": "Ошибка входа",
+    "registerError": "Ошибка регистрации",
+    "passwordsNotMatch": "Пароли не совпадают",
+    "guestMode": "Выйти из гостевого режима",
+    "guest": "Гость"
+  },
+  "welcome": {
+    "title": "Добро пожаловать в LLM ChatBot",
+    "description": "Выберите способ использования приложения",
+    "loginRegisterTitle": "Войти или зарегистрироваться",
+    "loginRegisterDescription": "Создайте аккаунт для сохранения истории чатов и доступа к вашим данным",
+    "guestTitle": "Гостевой режим",
+    "guestDescription": "Попробуйте приложение без регистрации. Данные не сохраняются и будут удалены при закрытии страницы.",
+    "useGuestAccount": "Использовать гостевой аккаунт"
+  },
+  "chat": {
+    "newChat": "+ Новый чат",
+    "noChats": "Нет чатов. Создайте новый!",
+    "selectChat": "Выберите чат или создайте новый",
+    "sendMessage": "Отправить",
+    "messagePlaceholder": "Введите сообщение... (Enter для отправки, Shift+Enter для новой строки)",
+    "you": "Вы",
+    "assistant": "Ассистент",
+    "incompleteMessage": "(неполное)",
+    "incompleteTooltip": "Сообщение было обрезано из-за ограничения токенов или ошибки"
+  },
+  "chatHistory": {
+    "archivedChats": "Архивированные чаты",
+    "noArchivedChats": "Нет архивированных чатов",
+    "restoreSelected": "Восстановить",
+    "deleteSelected": "Удалить",
+    "confirmDelete": "Вы уверены, что хотите удалить {{count}} чат(ов)? Это действие нельзя отменить.",
+    "archiveTooltip": "Архивировать"
+  },
+  "modals": {
+    "createChat": "Создать новый чат",
+    "chatTitle": "Название чата",
+    "chatTitlePlaceholder": "Введите название чата",
+    "create": "Создать"
+  },
+  "errors": {
+    "somethingWentWrong": "Что-то пошло не так",
+    "reloadPage": "Перезагрузить страницу",
+    "loadMessages": "Загрузка сообщений",
+    "loadChat": "Загрузка чата",
+    "createChat": "Создание чата",
+    "archiveChat": "Архивирование чата",
+    "restoreChats": "Восстановление чатов",
+    "deleteChats": "Удаление чатов",
+    "getResponse": "Получение ответа",
+    "startStream": "Запуск потока",
+    "reloadMessages": "Перезагрузка сообщений",
+    "reloadMessagesAfterError": "Перезагрузка сообщений после ошибки",
+    "loadArchivedChats": "Загрузка архивированных чатов"
+  },
+  "language": {
+    "switch": "Переключить язык",
+    "russian": "Русский",
+    "english": "English"
+  }
+}
+

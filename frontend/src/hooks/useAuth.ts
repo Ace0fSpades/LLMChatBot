@@ -3,9 +3,11 @@ import { useAppDispatch, useAppSelector } from './redux';
 import {
   setAuthLoading,
   setAuth,
+  setGuestSession,
   clearAuth,
   setAuthError,
   selectIsAuthenticated,
+  selectIsGuest,
   selectAccessToken,
   selectAuthLoading,
   selectAuthError,
@@ -19,6 +21,7 @@ import type { RegisterRequest, LoginRequest } from '@/types/auth.types';
 export const useAuth = () => {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isGuest = useAppSelector(selectIsGuest);
   const accessToken = useAppSelector(selectAccessToken);
   const loading = useAppSelector(selectAuthLoading);
   const error = useAppSelector(selectAuthError);
@@ -74,9 +77,22 @@ export const useAuth = () => {
   );
 
   /**
+   * Start guest session (no authentication required)
+   */
+  const startGuestSession = useCallback(() => {
+    dispatch(setGuestSession());
+  }, [dispatch]);
+
+  /**
    * Logout user
    */
   const logout = useCallback(async () => {
+    // If guest session, just clear auth without API call
+    if (isGuest) {
+      dispatch(clearAuth());
+      return;
+    }
+
     try {
       await authApi.logout();
     } catch {
@@ -84,15 +100,17 @@ export const useAuth = () => {
     } finally {
       dispatch(clearAuth());
     }
-  }, [dispatch]);
+  }, [dispatch, isGuest]);
 
   return {
     isAuthenticated,
+    isGuest,
     accessToken,
     loading,
     error,
     register,
     login,
+    startGuestSession,
     logout,
   };
 };

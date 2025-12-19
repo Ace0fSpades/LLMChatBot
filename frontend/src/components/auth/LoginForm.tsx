@@ -1,13 +1,16 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
+import styles from './LoginForm.module.scss';
 
 /**
  * Login form component
  */
 export const LoginForm = () => {
   const navigate = useNavigate();
-  const { login, loading, error } = useAuth();
+  const { login, loading, error, isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -22,14 +25,20 @@ export const LoginForm = () => {
     }
   };
 
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate('/chat');
+    return null;
+  }
+
   return (
-    <div className="auth-container">
-      <div className="auth-form">
-        <h2>Вход</h2>
+    <div className={styles['auth-container']}>
+      <div className={styles['auth-form']}>
+        <h2>{t('auth.loginTitle')}</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('auth.email')}</label>
             <input
               type="email"
               id="email"
@@ -40,7 +49,7 @@ export const LoginForm = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Пароль</label>
+            <label htmlFor="password">{t('auth.password')}</label>
             <input
               type="password"
               id="password"
@@ -51,11 +60,12 @@ export const LoginForm = () => {
             />
           </div>
           <button type="submit" disabled={loading} className="btn-primary">
-            {loading ? 'Вход...' : 'Войти'}
+            {loading ? t('common.loading') : t('auth.login')}
           </button>
         </form>
-        <p className="auth-link">
-          Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+        <p className={styles['auth-link']}>
+          {t('auth.noAccount')}{' '}
+          <a href="/register">{t('auth.register')}</a>
         </p>
       </div>
     </div>

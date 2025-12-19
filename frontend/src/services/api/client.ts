@@ -1,5 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import { getAccessToken, clearTokens } from '@/utils/tokenStorage';
+import { store } from '@/stores';
+import { selectIsGuest } from '@/stores/selectors/auth.selectors';
 
 /**
  * API base URL
@@ -36,9 +38,15 @@ const createApiClient = (): AxiosInstance => {
     (response) => response,
     (error: AxiosError) => {
       if (error.response?.status === 401) {
-        // Unauthorized - clear tokens and redirect to login
-        clearTokens();
-        window.location.href = '/login';
+        const state = store.getState();
+        const isGuest = selectIsGuest(state);
+        
+        // Only redirect to login if not a guest session
+        // Guest sessions don't have tokens, so 401 errors are expected
+        if (!isGuest) {
+          clearTokens();
+          window.location.href = '/';
+        }
       }
       return Promise.reject(error);
     }

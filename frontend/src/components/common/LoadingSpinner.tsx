@@ -1,10 +1,12 @@
+import styles from './LoadingSpinner.module.scss';
+
 /**
  * Loading spinner component
  */
 export const LoadingSpinner = () => {
   return (
-    <div className="loading-spinner">
-      <div className="spinner"></div>
+    <div className={styles['loading-spinner']}>
+      <div className={styles.spinner}></div>
     </div>
   );
 };

@@ -1,0 +1,67 @@
+@use 'variables' as *;
+
+// Button mixin
+@mixin button-base {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all $transition-fast;
+}
+
+@mixin button-primary {
+  @include button-base;
+  background-color: $primary-color;
+  color: $white;
+
+  &:hover:not(:disabled) {
+    background-color: $primary-hover;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background-color: $secondary-color;
+  color: $white;
+
+  &:hover {
+    background-color: $secondary-hover;
+  }
+}
+
+// Form input mixin
+@mixin form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  font-size: 1rem;
+  transition: border-color $transition-fast;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+}
+
+// Card mixin
+@mixin card {
+  background: $white;
+  border-radius: $radius-md;
+  box-shadow: $shadow-md;
+}
+
+// Flex center mixin
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

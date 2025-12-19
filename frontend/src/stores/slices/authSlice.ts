@@ -14,6 +14,7 @@ import type { AuthState } from '../types/auth.types';
  */
 const initialState: AuthState = {
   isAuthenticated: getAccessToken() !== null,
+  isGuest: false,
   accessToken: getAccessToken(),
   refreshToken: getRefreshToken(),
   loading: false,
@@ -41,6 +42,7 @@ const authSlice = createSlice({
       state.accessToken = action.payload.access_token;
       state.refreshToken = action.payload.refresh_token;
       state.isAuthenticated = true;
+      state.isGuest = false;
       state.error = null;
 
       // Save tokens to localStorage
@@ -49,10 +51,22 @@ const authSlice = createSlice({
     },
 
     /**
+     * Set guest session (no tokens, no localStorage)
+     */
+    setGuestSession: (state) => {
+      state.isAuthenticated = true;
+      state.isGuest = true;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.error = null;
+    },
+
+    /**
      * Clear authentication state
      */
     clearAuth: (state) => {
       state.isAuthenticated = false;
+      state.isGuest = false;
       state.accessToken = null;
       state.refreshToken = null;
       state.error = null;
@@ -70,6 +84,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setAuthLoading, setAuth, clearAuth, setAuthError } = authSlice.actions;
+export const { setAuthLoading, setAuth, setGuestSession, clearAuth, setAuthError } = authSlice.actions;
 export default authSlice.reducer;
 

@@ -1,4 +1,6 @@
 import { useState, FormEvent, KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+import styles from './ChatInterface.module.scss';
 
 /**
  * Input area props
@@ -12,6 +14,7 @@ interface InputAreaProps {
  * Input area component for chat messages
  */
 export const InputArea = ({ onSend, disabled }: InputAreaProps) => {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
 
   /**
@@ -36,18 +39,18 @@ export const InputArea = ({ onSend, disabled }: InputAreaProps) => {
   };
 
   return (
-    <div className="input-area">
+    <div className={styles['input-area']}>
       <form onSubmit={handleSubmit}>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Введите сообщение... (Enter для отправки, Shift+Enter для новой строки)"
+          placeholder={t('chat.messagePlaceholder')}
           disabled={disabled}
           rows={3}
         />
         <button type="submit" disabled={disabled || !message.trim()} className="btn-primary">
-          Отправить
+          {t('chat.sendMessage')}
         </button>
       </form>
     </div>

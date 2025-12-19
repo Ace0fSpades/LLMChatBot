@@ -1,0 +1,39 @@
+@use '@/styles/variables' as *;
+
+.header {
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+  padding: $spacing-md $spacing-xl;
+  box-shadow: $shadow-sm;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $text-color;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.guest-badge {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: $warning-color;
+  background: rgba(255, 152, 0, 0.1);
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+  margin-left: $spacing-sm;
+}
+

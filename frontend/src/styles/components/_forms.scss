@@ -1,0 +1,38 @@
+@use '../variables' as *;
+@use '../mixins' as *;
+
+.form-group {
+  margin-bottom: $spacing-md;
+
+  label {
+    display: block;
+    margin-bottom: $spacing-sm;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  input,
+  textarea {
+    @include form-input;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.error-message {
+  background-color: $error-bg;
+  color: $error-text;
+  padding: 0.75rem;
+  border-radius: $radius-sm;
+  margin-bottom: $spacing-md;
+}
+
+.form-hint {
+  margin-top: $spacing-sm;
+  font-size: 0.85rem;
+  color: $text-muted;
+  margin-bottom: 0;
+}
+

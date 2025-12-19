@@ -1,0 +1,69 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.chat-interface {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: $white;
+  overflow: hidden;
+}
+
+.chat-interface-empty {
+  flex: 1;
+  @include flex-center;
+  color: $text-muted;
+}
+
+.chat-header {
+  padding: $spacing-md;
+  border-bottom: 1px solid $border-color;
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $text-color;
+  }
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.input-area {
+  padding: $spacing-md;
+  border-top: 1px solid $border-color;
+  background-color: $white;
+
+  form {
+    display: flex;
+    gap: $spacing-sm;
+    align-items: flex-end;
+  }
+
+  textarea {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid $border-light;
+    border-radius: $radius-sm;
+    font-size: 1rem;
+    resize: none;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+
+  button {
+    padding: 0.75rem $spacing-lg;
+    height: fit-content;
+  }
+}
+

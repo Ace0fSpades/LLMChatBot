@@ -15,7 +15,9 @@ import { LoadingSpinner } from '@/components/common';
 import { useChatInterfaceSelectors } from './ChatInterface.selectors';
 import { handleError } from '@/utils/errorHandler';
 import { AxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
 import type { Message } from '@/types/message.types';
+import styles from './ChatInterface.module.scss';
 
 /**
  * Chat interface component
@@ -24,6 +26,7 @@ export const ChatInterface = () => {
   const dispatch = useAppDispatch();
   const { currentSession, messages, isStreaming } = useChatInterfaceSelectors();
   const { startStream } = useChatStream();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const assistantMessageIdRef = useRef<string | null>(null);
   const streamingContentRef = useRef<string>('');
@@ -48,7 +51,7 @@ export const ChatInterface = () => {
           dispatch(setCurrentSession(null));
           dispatch(setMessages([]));
         } else {
-          handleError(error, 'Загрузка сообщений');
+          handleError(error, t('errors.loadMessages'));
         }
       } finally {
         setLoading(false);
@@ -113,7 +116,7 @@ export const ChatInterface = () => {
             chatApi.getChatSession(currentSession.id, true).then((session) => {
               dispatch(setMessages(session.messages));
             }).catch((err) => {
-              handleError(err, 'Перезагрузка сообщений');
+              handleError(err, t('errors.reloadMessages'));
             });
           }, 500); // 500ms delay to allow backend to save
         },
@@ -127,22 +130,22 @@ export const ChatInterface = () => {
             // Fallback: remove failed assistant message manually
             const currentMessages = messages.filter(m => m.id !== assistantMessageId);
             dispatch(setMessages(currentMessages));
-            handleError(err, 'Перезагрузка сообщений после ошибки');
+            handleError(err, t('errors.reloadMessagesAfterError'));
           });
           // Show error to user
-          handleError(error, 'Получение ответа');
+          handleError(error, t('errors.getResponse'));
         }
       );
     } catch (error) {
-      handleError(error, 'Запуск потока');
+      handleError(error, t('errors.startStream'));
       dispatch(setStreaming(false));
     }
   };
 
   if (!currentSession) {
     return (
-      <div className="chat-interface-empty">
-        <p>Выберите чат или создайте новый</p>
+      <div className={styles['chat-interface-empty']}>
+        <p>{t('chat.selectChat')}</p>
       </div>
     );
   }
@@ -152,8 +155,8 @@ export const ChatInterface = () => {
   }
 
   return (
-    <div className="chat-interface">
-      <div className="chat-header">
+    <div className={styles['chat-interface']}>
+      <div className={styles['chat-header']}>
         <h2>{currentSession.title}</h2>
       </div>
       <MessageList messages={messages} />

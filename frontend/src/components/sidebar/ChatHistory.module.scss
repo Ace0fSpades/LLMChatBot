@@ -1,0 +1,84 @@
+@use '@/styles/variables' as *;
+
+.chat-history {
+  width: 300px;
+  background-color: $white;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-history-header {
+  padding: $spacing-md;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.chat-history-archive-btn {
+  flex: 1;
+  min-width: 100px;
+}
+
+.chat-history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-sm;
+}
+
+.chat-history-empty {
+  padding: $spacing-xl;
+  text-align: center;
+  color: $text-muted;
+}
+
+.chat-history-item {
+  padding: 0.75rem;
+  margin-bottom: $spacing-sm;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover {
+    background-color: $background-color;
+  }
+
+  &.active {
+    background-color: #e3f2fd;
+  }
+}
+
+.chat-history-item-content {
+  flex: 1;
+}
+
+.chat-history-item-title {
+  font-weight: 500;
+  margin-bottom: $spacing-xs;
+  color: $text-color;
+}
+
+.chat-history-item-meta {
+  font-size: 0.85rem;
+  color: $text-muted;
+}
+
+.chat-history-item-archive {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: $text-muted;
+  cursor: pointer;
+  padding: 0 $spacing-sm;
+  line-height: 1;
+
+  &:hover {
+    color: $danger-color;
+  }
+}
+

@@ -1,0 +1,11 @@
+@use '../mixins' as *;
+@use '../variables' as *;
+
+.btn-primary {
+  @include button-primary;
+}
+
+.btn-secondary {
+  @include button-secondary;
+}
+

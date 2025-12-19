@@ -1,4 +1,6 @@
 import { Component, ReactNode, ErrorInfo } from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
+import styles from './ErrorBoundary.module.scss';
 
 /**
  * Error boundary props
@@ -18,8 +20,8 @@ interface State {
 /**
  * Error boundary component for catching React errors
  */
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+class ErrorBoundaryBase extends Component<Props & WithTranslation, State> {
+  constructor(props: Props & WithTranslation) {
     super(props);
     this.state = { hasError: false };
   }
@@ -43,12 +45,13 @@ export class ErrorBoundary extends Component<Props, State> {
    */
   render() {
     if (this.state.hasError) {
+      const { t } = this.props;
       return (
-        <div className="error-boundary">
-          <h2>Что-то пошло не так</h2>
-          <p>{this.state.error?.message || 'Произошла ошибка'}</p>
+        <div className={styles['error-boundary']}>
+          <h2>{t('errors.somethingWentWrong')}</h2>
+          <p>{this.state.error?.message || t('errors.somethingWentWrong')}</p>
           <button onClick={() => window.location.reload()}>
-            Перезагрузить страницу
+            {t('errors.reloadPage')}
           </button>
         </div>
       );
@@ -57,4 +60,6 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
+export const ErrorBoundary = withTranslation()(ErrorBoundaryBase);
 

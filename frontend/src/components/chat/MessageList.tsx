@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { MessageItem } from './MessageItem';
 import type { Message } from '@/types/message.types';
+import styles from './MessageList.module.scss';
 
 /**
  * Message list props
@@ -23,7 +24,7 @@ export const MessageList = ({ messages }: MessageListProps) => {
   }, [messages]);
 
   return (
-    <div className="message-list">
+    <div className={styles['message-list']}>
       {messages.map((message) => (
         <MessageItem key={message.id} message={message} />
       ))}
