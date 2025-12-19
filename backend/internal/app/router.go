@@ -1,6 +1,8 @@
 package app
 
 import (
+	"net/http"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +29,24 @@ func SetupRouter(a *App, deps *Dependencies) *gin.Engine {
 
 	// Health check endpoint (no auth required)
 	router.GET("/health", deps.StreamingHandler.Health)
+
+	// Serve static files from frontend build in production
+	if a.Config.Server.Environment == "production" {
+		// Serve static files
+		staticPath := filepath.Join(".", "frontend", "dist")
+		router.Static("/assets", filepath.Join(staticPath, "assets"))
+		router.StaticFile("/favicon.ico", filepath.Join(staticPath, "favicon.ico"))
+
+		// Serve index.html for all non-API routes (SPA fallback)
+		router.NoRoute(func(c *gin.Context) {
+			// Don't serve index.html for API routes
+			if len(c.Request.URL.Path) >= 4 && c.Request.URL.Path[:4] == "/api" {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+				return
+			}
+			c.File(filepath.Join(staticPath, "index.html"))
+		})
+	}
 
 	// API v1 routes
 	v1 := router.Group("/api/v1")
@@ -59,6 +79,10 @@ func SetupRouter(a *App, deps *Dependencies) *gin.Engine {
 				chats.GET("/:id", deps.ChatHandler.GetChatSession)
 				chats.PUT("/:id", deps.ChatHandler.UpdateChatSession)
 				chats.DELETE("/:id", deps.ChatHandler.ArchiveChatSession)
+				chats.POST("/:id/restore", deps.ChatHandler.RestoreChatSession)
+				chats.DELETE("/:id/permanent", deps.ChatHandler.DeleteChatSession)
+				chats.POST("/restore", deps.ChatHandler.RestoreChatSessions)
+				chats.POST("/delete", deps.ChatHandler.DeleteChatSessions)
 			}
 
 			// Streaming routes

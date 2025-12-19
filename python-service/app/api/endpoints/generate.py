@@ -78,24 +78,26 @@ async def stream_completion(request: GenerationRequest):
         """
         Generator for newline-delimited JSON stream
         """
+        service = InferenceService()
+        
+        # Convert DTOs to dict format
+        history = None
+        if request.history:
+            history = [
+                {"role": msg.role, "content": msg.content}
+                for msg in request.history
+            ]
+        
+        # Track full response and token count
+        full_response = ""
+        token_count = 0
+        tokenizer = service.get_tokenizer()
+        has_tokens = False
+        
         try:
-            service = InferenceService()
-            
-            # Convert DTOs to dict format
-            history = None
-            if request.history:
-                history = [
-                    {"role": msg.role, "content": msg.content}
-                    for msg in request.history
-                ]
-            
-            # Track full response and token count
-            full_response = ""
-            token_count = 0
-            tokenizer = service.get_tokenizer()
-            
             # Stream tokens
             async for token_chunk in service.generate_stream(request.prompt, history):
+                has_tokens = True
                 full_response += token_chunk
                 token_count += len(tokenizer.encode(token_chunk))
                 
@@ -108,27 +110,66 @@ async def stream_completion(request: GenerationRequest):
                 
                 yield json.dumps(token_response.dict()) + "\n"
             
-            # Send completion signal
-            completion_response = TokenResponse(
-                type="complete",
-                content=full_response,
-                tokens=token_count
-            )
-            
-            yield json.dumps(completion_response.dict()) + "\n"
+            # Always send completion signal if we have tokens
+            # This is critical for proper stream termination
+            if has_tokens:
+                completion_response = TokenResponse(
+                    type="complete",
+                    content=full_response,
+                    tokens=token_count
+                )
+                yield json.dumps(completion_response.dict()) + "\n"
+            else:
+                # Even if no tokens, send empty completion to signal end of stream
+                completion_response = TokenResponse(
+                    type="complete",
+                    content="",
+                    tokens=0
+                )
+                yield json.dumps(completion_response.dict()) + "\n"
         
+        except GeneratorExit:
+            # Client disconnected - this is normal, just log and exit
+            logger.info("Client disconnected during streaming")
+            raise
         except Exception as e:
             logger.error(f"Error in stream_completion: {e}", exc_info=True)
-            error_response = TokenResponse(
-                type="error",
-                content=str(e)
-            )
-            yield json.dumps(error_response.dict()) + "\n"
+            # If we have partial response, send it as complete (incomplete) before error
+            if has_tokens and full_response:
+                try:
+                    completion_response = TokenResponse(
+                        type="complete",
+                        content=full_response,
+                        tokens=token_count
+                    )
+                    yield json.dumps(completion_response.dict()) + "\n"
+                except GeneratorExit:
+                    # Client already disconnected, just exit
+                    raise
+            else:
+                # Only send error if we have no tokens
+                try:
+                    error_response = TokenResponse(
+                        type="error",
+                        content=str(e)
+                    )
+                    yield json.dumps(error_response.dict()) + "\n"
+                except GeneratorExit:
+                    # Client already disconnected, just exit
+                    raise
     
-    return StreamingResponse(
+    response = StreamingResponse(
         json_stream_generator(),
-        media_type="application/x-ndjson"
+        media_type="application/x-ndjson",
+        headers={
+            "X-Accel-Buffering": "no",  # Disable nginx buffering
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        }
     )
+    
+    # Ensure response is properly closed after streaming
+    return response
 
 
 @router.websocket("/ws")

@@ -66,7 +66,7 @@ func (s *MessageService) CreateUserMessage(sessionID, userID uuid.UUID, content 
 }
 
 // CreateAssistantMessage creates an assistant message in a chat session
-func (s *MessageService) CreateAssistantMessage(sessionID uuid.UUID, content string, tokens int) (*dto.MessageResponse, error) {
+func (s *MessageService) CreateAssistantMessage(sessionID uuid.UUID, content string, tokens int, isIncomplete bool) (*dto.MessageResponse, error) {
 	// Get next sequence number
 	seqNum, err := s.messageRepo.GetNextSequenceNumber(sessionID)
 	if err != nil {
@@ -79,6 +79,7 @@ func (s *MessageService) CreateAssistantMessage(sessionID uuid.UUID, content str
 		Role:           model.MessageRoleAssistant,
 		Content:        content,
 		Tokens:         tokens,
+		IsIncomplete:   isIncomplete,
 		SequenceNumber: seqNum,
 	}
 
@@ -97,6 +98,7 @@ func (s *MessageService) CreateAssistantMessage(sessionID uuid.UUID, content str
 		Role:           message.Role,
 		Content:        message.Content,
 		Tokens:         message.Tokens,
+		IsIncomplete:   message.IsIncomplete,
 		CreatedAt:      message.CreatedAt,
 		SequenceNumber: message.SequenceNumber,
 	}, nil
@@ -116,6 +118,7 @@ func (s *MessageService) GetChatHistory(sessionID uuid.UUID, limit int) ([]*dto.
 			Role:           msg.Role,
 			Content:        msg.Content,
 			Tokens:         msg.Tokens,
+			IsIncomplete:   msg.IsIncomplete,
 			CreatedAt:      msg.CreatedAt,
 			SequenceNumber: msg.SequenceNumber,
 		}

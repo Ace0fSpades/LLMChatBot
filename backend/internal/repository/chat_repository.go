@@ -84,6 +84,36 @@ func (r *ChatRepository) Archive(id, userID uuid.UUID) error {
 	return nil
 }
 
+// Unarchive restores an archived chat session
+func (r *ChatRepository) Unarchive(id, userID uuid.UUID) error {
+	result := r.db.Model(&model.ChatSession{}).
+		Where("id = ? AND user_id = ? AND is_archived = ?", id, userID, true).
+		Update("is_archived", false)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("chat session not found or not archived")
+	}
+
+	return nil
+}
+
+// UnarchiveMultiple restores multiple archived chat sessions
+func (r *ChatRepository) UnarchiveMultiple(ids []uuid.UUID, userID uuid.UUID) error {
+	result := r.db.Model(&model.ChatSession{}).
+		Where("id IN ? AND user_id = ? AND is_archived = ?", ids, userID, true).
+		Update("is_archived", false)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
 // Delete permanently deletes a chat session
 func (r *ChatRepository) Delete(id, userID uuid.UUID) error {
 	result := r.db.Where("id = ? AND user_id = ?", id, userID).Delete(&model.ChatSession{})
@@ -93,6 +123,16 @@ func (r *ChatRepository) Delete(id, userID uuid.UUID) error {
 
 	if result.RowsAffected == 0 {
 		return errors.New("chat session not found")
+	}
+
+	return nil
+}
+
+// DeleteMultiple permanently deletes multiple chat sessions
+func (r *ChatRepository) DeleteMultiple(ids []uuid.UUID, userID uuid.UUID) error {
+	result := r.db.Where("id IN ? AND user_id = ?", ids, userID).Delete(&model.ChatSession{})
+	if result.Error != nil {
+		return result.Error
 	}
 
 	return nil

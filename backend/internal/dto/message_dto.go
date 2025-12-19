@@ -8,6 +8,7 @@ type MessageResponse struct {
 	Role           string    `json:"role"`
 	Content        string    `json:"content"`
 	Tokens         int       `json:"tokens"`
+	IsIncomplete   bool      `json:"is_incomplete,omitempty"`
 	CreatedAt      time.Time `json:"created_at"`
 	SequenceNumber int       `json:"sequence_number"`
 }

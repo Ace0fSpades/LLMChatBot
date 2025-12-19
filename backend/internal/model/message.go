@@ -14,7 +14,7 @@ type Message struct {
 	Role           string    `gorm:"not null;size:50;check:role IN ('user', 'assistant', 'system')"`
 	Content        string    `gorm:"type:text;not null"`
 	Tokens         int       `gorm:"default:0"`
-	ModelResponse  string    `gorm:"type:text"` // For model metadata
+	IsIncomplete   bool      `gorm:"default:false"` // Flag for incomplete/truncated messages
 	CreatedAt      time.Time
 	SequenceNumber int `gorm:"not null"` // Order number in chat
 

@@ -29,3 +29,8 @@ type ChatSessionWithMessagesResponse struct {
 	ChatSessionResponse
 	Messages []MessageResponse `json:"messages"`
 }
+
+// BulkOperationRequest represents bulk operation request
+type BulkOperationRequest struct {
+	IDs []string `json:"ids" binding:"required,min=1"`
+}

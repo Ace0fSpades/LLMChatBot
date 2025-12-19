@@ -143,5 +143,10 @@ func Migrate(models ...interface{}) error {
 
 // SetUserContext sets the current user ID for RLS (Row Level Security)
 func SetUserContext(db *gorm.DB, userID string) error {
-	return db.Exec("SET app.current_user_id = ?", userID).Error
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+	_, err = sqlDB.Exec("SET app.current_user_id = $1", userID)
+	return err
 }

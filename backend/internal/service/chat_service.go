@@ -119,6 +119,35 @@ func (s *ChatService) ArchiveChatSession(sessionID, userID uuid.UUID) error {
 	return s.chatRepo.Archive(sessionID, userID)
 }
 
+// RestoreChatSession restores an archived chat session
+func (s *ChatService) RestoreChatSession(sessionID, userID uuid.UUID) (*dto.ChatSessionResponse, error) {
+	if err := s.chatRepo.Unarchive(sessionID, userID); err != nil {
+		return nil, err
+	}
+
+	session, err := s.chatRepo.GetByIDAndUserID(sessionID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.toChatSessionResponse(session), nil
+}
+
+// RestoreChatSessions restores multiple archived chat sessions
+func (s *ChatService) RestoreChatSessions(sessionIDs []uuid.UUID, userID uuid.UUID) error {
+	return s.chatRepo.UnarchiveMultiple(sessionIDs, userID)
+}
+
+// DeleteChatSession permanently deletes a chat session
+func (s *ChatService) DeleteChatSession(sessionID, userID uuid.UUID) error {
+	return s.chatRepo.Delete(sessionID, userID)
+}
+
+// DeleteChatSessions permanently deletes multiple chat sessions
+func (s *ChatService) DeleteChatSessions(sessionIDs []uuid.UUID, userID uuid.UUID) error {
+	return s.chatRepo.DeleteMultiple(sessionIDs, userID)
+}
+
 // toChatSessionResponse converts a ChatSession model to response DTO
 func (s *ChatService) toChatSessionResponse(session *model.ChatSession) *dto.ChatSessionResponse {
 	return &dto.ChatSessionResponse{

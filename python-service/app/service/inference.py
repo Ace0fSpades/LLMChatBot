@@ -165,8 +165,8 @@ class StreamingGenerator:
         # Create stopping criteria
         stopping_criteria = StoppingCriteriaList([StopOnTokens(stop_token_ids)])
         
-        # Limit max_new_tokens to 512 to prevent infinite generation
-        max_tokens = min(self.config.max_new_tokens, 512)
+        # Use configured max_new_tokens (default 2048, can be increased)
+        max_tokens = self.config.max_new_tokens
         
         # Generation parameters for Qwen 2.5
         # Two stopping conditions: stop tokens (via stopping_criteria) and max tokens (via max_new_tokens)
@@ -189,14 +189,15 @@ class StreamingGenerator:
             target=self._run_generation,
             args=(generation_kwargs,)
         )
+        generation_thread.daemon = True  # Make thread daemon so it doesn't block shutdown
         generation_thread.start()
         
         # Stream tokens
         buffer = []
         chunk_size = self.config.chunk_size
-        full_text = ""
         
         try:
+            # Read all tokens from streamer
             for token in streamer:
                 buffer.append(token)
                 
@@ -207,19 +208,33 @@ class StreamingGenerator:
                     yield chunk
                     
                     # Add delay if configured
+                    # Note: delay is minimal and shouldn't cause issues
                     if self.config.delay_ms > 0:
                         await asyncio.sleep(self.config.delay_ms / 1000.0)
             
-            # Yield remaining tokens
+            # Always yield remaining tokens, even if buffer is not full
+            # This ensures all tokens are sent even for short responses
             if buffer:
-                yield "".join(buffer)
+                chunk = "".join(buffer)
+                buffer.clear()
+                yield chunk
             
-            # Wait for generation to complete
-            generation_thread.join()
+            # Wait for generation to complete (with timeout to avoid blocking)
+            # Increased timeout to ensure generation completes
+            generation_thread.join(timeout=2.0)
             
+        except GeneratorExit:
+            # Client disconnected, stop generation gracefully
+            logger.info("Client disconnected, stopping generation")
+            # Don't wait for thread - it's daemon and will be cleaned up
+            raise
         except Exception as e:
             logger.error(f"Error during streaming generation: {e}", exc_info=True)
             raise
+        finally:
+            # Ensure thread doesn't block shutdown
+            if generation_thread.is_alive():
+                logger.warning("Generation thread still alive after stream end, but daemon will be cleaned up")
     
     def _run_generation(self, generation_kwargs: Dict) -> None:
         """
@@ -270,8 +285,8 @@ class StreamingGenerator:
         # Create stopping criteria
         stopping_criteria = StoppingCriteriaList([StopOnTokens(stop_token_ids)])
         
-        # Limit max_new_tokens to 512 to prevent infinite generation
-        max_tokens = min(self.config.max_new_tokens, 512)
+        # Use configured max_new_tokens (default 2048, can be increased)
+        max_tokens = self.config.max_new_tokens
         
         # Generate
         with torch.no_grad():

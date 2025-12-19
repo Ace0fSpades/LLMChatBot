@@ -22,10 +22,16 @@ type StreamingService struct {
 }
 
 // NewStreamingService creates a new streaming service
+// Note: This service is used ONLY for streaming requests to the LLM service.
+// The HTTP client has no timeout (Timeout: 0) because streaming can take a long time
+// and is limited by max_tokens anyway. Regular non-streaming HTTP requests
+// to other services should use a client with appropriate timeout settings.
 func NewStreamingService(cfg *config.Config, msgSvc *MessageService) *StreamingService {
 	return &StreamingService{
+		// Use client without timeout for streaming requests
+		// Streaming can take a long time, so we don't want to interrupt it
 		llmClient: &http.Client{
-			Timeout: cfg.LLM.Timeout,
+			Timeout: 0, // No timeout for streaming requests (generation limited by max_tokens)
 		},
 		llmURL: cfg.LLM.BaseURL,
 		msgSvc: msgSvc,
@@ -97,6 +103,7 @@ func (s *StreamingService) StreamGeneration(sessionID uuid.UUID, message string,
 		var fullResponse strings.Builder
 		totalTokens := 0
 
+		hasReceivedComplete := false
 		for scanner.Scan() {
 			line := strings.TrimSpace(scanner.Text())
 
@@ -113,11 +120,12 @@ func (s *StreamingService) StreamGeneration(sessionID uuid.UUID, message string,
 			}
 
 			if tokenResp.Type == "complete" {
-				// Send completion signal
+				hasReceivedComplete = true
+				// Send completion signal with full response
 				tokenChan <- TokenResponse{
 					Type:    "complete",
-					Content: fullResponse.String(),
-					Tokens:  totalTokens,
+					Content: tokenResp.Content, // Use content from complete event
+					Tokens:  tokenResp.Tokens,
 				}
 				break
 			}
@@ -138,6 +146,16 @@ func (s *StreamingService) StreamGeneration(sessionID uuid.UUID, message string,
 			if err != io.EOF {
 				errChan <- fmt.Errorf("failed to read NDJSON stream: %w", err)
 				return
+			}
+		}
+
+		// If we reached here without a "complete" event, send one with accumulated response
+		// This handles cases where Python service didn't send complete event
+		if !hasReceivedComplete && fullResponse.Len() > 0 {
+			tokenChan <- TokenResponse{
+				Type:    "complete",
+				Content: fullResponse.String(),
+				Tokens:  totalTokens,
 			}
 		}
 	}()

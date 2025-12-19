@@ -20,6 +20,13 @@ type Server struct {
 }
 
 // NewServer creates a new HTTP server
+// Note: Timeouts are set for all requests by default:
+//   - ReadTimeout: limits time to read request body (default: 15s)
+//   - WriteTimeout: limits time to write response (default: 15s)
+//   - IdleTimeout: limits time to keep idle connections (default: 60s)
+//
+// For SSE streaming endpoints, WriteTimeout is explicitly disabled
+// in the handler using http.ResponseController to allow long-running streams.
 func NewServer(a *App, router *gin.Engine) *Server {
 	return &Server{
 		httpServer: &http.Server{
