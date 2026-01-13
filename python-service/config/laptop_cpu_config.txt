@@ -1,0 +1,109 @@
+# ============================================================================
+# CONFIGURATION FOR LAPTOP WITHOUT GPU
+# ============================================================================
+# Hardware: Intel i7-13700H, 16GB RAM, NO GPU
+# This configuration is optimized for CPU inference with limited memory
+# ============================================================================
+
+# Server Configuration
+HOST=0.0.0.0
+PORT=5000
+DEBUG=false
+
+# ============================================================================
+# MODEL CONFIGURATION - OPTIMIZED FOR CPU
+# ============================================================================
+
+# Model Selection: Using smaller 3B model for CPU inference
+# 3B model requires ~6-8GB RAM in float32, ~3-4GB in 8bit quantization
+MODEL_NAME=Qwen/Qwen2.5-3B-Instruct
+
+# HuggingFace Token (required for downloading models)
+# Get your token from: https://huggingface.co/settings/tokens
+HUGGINGFACE_TOKEN=your_token_here
+
+# Device: CPU (no GPU available)
+DEVICE=cpu
+
+# Quantization: 8bit reduces memory usage by ~50% with minimal quality loss
+# Options: "none" (6-8GB RAM), "8bit" (3-4GB RAM)
+# Note: 4bit quantization requires GPU, not available for CPU
+QUANTIZATION=8bit
+
+# Data Type: float32 is recommended for CPU
+# bfloat16 is faster but may not be supported on all CPUs
+# Options: "float32" (safest), "float16", "bfloat16"
+DTYPE=float32
+
+# ============================================================================
+# GENERATION PARAMETERS - OPTIMIZED FOR SPEED
+# ============================================================================
+
+# Maximum tokens to generate per response
+# Lower value = faster response, less memory usage
+# Recommended: 256-512 for CPU
+MAX_NEW_TOKENS=256
+
+# Temperature: Controls randomness (0.0 = deterministic, 1.0 = creative)
+# Lower values make responses more focused and consistent
+TEMPERATURE=0.6
+
+# Top-p (nucleus sampling): Consider tokens with cumulative probability
+# 0.9 is a good balance between quality and diversity
+TOP_P=0.9
+
+# Repetition Penalty: Prevents model from repeating itself
+# 1.1 is a good default (1.0 = no penalty, higher = more penalty)
+REPETITION_PENALTY=1.1
+
+# Context Window: Maximum conversation history length
+# Qwen 2.5 supports up to 32K, but for CPU we limit it for speed
+# Recommended: 4096-8192 for CPU
+CONTEXT_WINDOW=4096
+
+# ============================================================================
+# STREAMING CONFIGURATION
+# ============================================================================
+
+# Tokens per chunk sent to client
+# Smaller = more frequent updates, higher overhead
+CHUNK_SIZE=5
+
+# Delay between chunks in milliseconds
+# CPU is slower, so we can reduce delay
+DELAY_MS=20
+
+# Token buffer size for streaming
+BUFFER_SIZE=50
+
+# ============================================================================
+# BACKEND INTEGRATION
+# ============================================================================
+
+# URL of the Go backend service
+BACKEND_URL=http://localhost:8080
+
+# ============================================================================
+# PERFORMANCE NOTES FOR YOUR HARDWARE
+# ============================================================================
+#
+# Expected Performance on i7-13700H (CPU only):
+# - Model loading time: 30-60 seconds
+# - First token latency: 2-5 seconds
+# - Generation speed: 3-8 tokens/second
+# - Memory usage: 3-4GB (with 8bit quantization)
+#
+# Tips for better performance:
+# 1. Close other applications to free up RAM
+# 2. Use 8bit quantization (QUANTIZATION=8bit)
+# 3. Reduce MAX_NEW_TOKENS to 256 or less
+# 4. Reduce CONTEXT_WINDOW to 4096
+# 5. Keep conversation history short
+#
+# If you experience out-of-memory errors:
+# - Set QUANTIZATION=8bit (if not already)
+# - Reduce CONTEXT_WINDOW to 2048
+# - Reduce MAX_NEW_TOKENS to 128
+# - Consider using even smaller model (1.5B if available)
+#
+# ============================================================================

@@ -51,14 +51,18 @@ const authSlice = createSlice({
     },
 
     /**
-     * Set guest session (no tokens, no localStorage)
+     * Set guest session (temporary account with tokens)
      */
-    setGuestSession: (state) => {
+    setGuestSession: (state, action: PayloadAction<AuthResponse>) => {
+      state.accessToken = action.payload.access_token;
+      state.refreshToken = action.payload.refresh_token;
       state.isAuthenticated = true;
       state.isGuest = true;
-      state.accessToken = null;
-      state.refreshToken = null;
       state.error = null;
+
+      // Save tokens to sessionStorage (not localStorage) for guest sessions
+      sessionStorage.setItem('access_token', action.payload.access_token);
+      sessionStorage.setItem('refresh_token', action.payload.refresh_token);
     },
 
     /**

@@ -17,6 +17,9 @@ func main() {
 	// Initialize dependencies
 	deps := app.InitializeDependencies(application)
 
+	// Start guest account cleanup
+	application.StartGuestCleanup(deps)
+
 	// Setup router
 	router := app.SetupRouter(application, deps)
 

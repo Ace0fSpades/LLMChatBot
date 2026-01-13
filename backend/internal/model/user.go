@@ -16,7 +16,9 @@ type User struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	LastLoginAt  *time.Time
-	IsActive     bool `gorm:"default:true"`
+	IsActive     bool       `gorm:"default:true"`
+	IsGuest      bool       `gorm:"default:false"`
+	ExpiresAt    *time.Time `gorm:"index"`
 
 	// Relationships
 	ChatSessions []ChatSession `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`

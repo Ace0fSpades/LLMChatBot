@@ -87,3 +87,13 @@ func (r *UserRepository) UsernameExists(username string) (bool, error) {
 	err := r.db.Model(&model.User{}).Where("username = ?", username).Count(&count).Error
 	return count > 0, err
 }
+
+// DeleteExpiredGuests deletes expired guest accounts
+func (r *UserRepository) DeleteExpiredGuests() error {
+	return r.db.Where("is_guest = ? AND expires_at < NOW()", true).Delete(&model.User{}).Error
+}
+
+// Delete deletes a user by ID
+func (r *UserRepository) Delete(id uuid.UUID) error {
+	return r.db.Delete(&model.User{}, "id = ?", id).Error
+}

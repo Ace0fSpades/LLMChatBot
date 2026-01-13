@@ -42,9 +42,6 @@ class Settings(BaseSettings):
     # Backend integration
     BACKEND_URL: str = "http://localhost:8080"
     
-    # Model config file path
-    MODEL_CONFIG_PATH: str = "config/model_config.yaml"
-    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

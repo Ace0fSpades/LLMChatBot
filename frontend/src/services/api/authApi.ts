@@ -51,5 +51,15 @@ export const authApi = {
   logout: async (): Promise<void> => {
     await apiClient.post('/api/v1/auth/logout');
   },
+
+  /**
+   * Create guest session
+   */
+  createGuestSession: async (): Promise<AuthResponse & { guest_id: string }> => {
+    const response = await apiClient.post<AuthResponse & { guest_id: string }>(
+      '/api/v1/auth/guest'
+    );
+    return response.data;
+  },
 };
 

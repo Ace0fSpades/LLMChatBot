@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,15 @@ export const LoginForm = () => {
   const [password, setPassword] = useState('');
 
   /**
+   * Redirect if already authenticated
+   */
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/chat');
+    }
+  }, [isAuthenticated, navigate]);
+
+  /**
    * Handle form submission
    */
   const handleSubmit = async (e: FormEvent) => {
@@ -24,12 +33,6 @@ export const LoginForm = () => {
       navigate('/chat');
     }
   };
-
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate('/chat');
-    return null;
-  }
 
   return (
     <div className={styles['auth-container']}>

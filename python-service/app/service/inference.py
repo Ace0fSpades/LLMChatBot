@@ -9,7 +9,7 @@ import torch
 from transformers import TextIteratorStreamer, StoppingCriteria, StoppingCriteriaList
 
 from app.model.manager import ModelManager
-from app.config.model_config import ModelConfig
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -33,18 +33,16 @@ class StreamingGenerator:
     Handles streaming text generation with token buffering
     """
     
-    def __init__(self, model, tokenizer, config: ModelConfig):
+    def __init__(self, model, tokenizer):
         """
         Initialize streaming generator
         
         Args:
             model: Loaded model
             tokenizer: Loaded tokenizer
-            config: Model configuration
         """
         self.model = model
         self.tokenizer = tokenizer
-        self.config = config
         self.device = model.device if hasattr(model, 'device') else next(model.parameters()).device
     
     def _get_stop_tokens(self) -> list:
@@ -149,7 +147,7 @@ class StreamingGenerator:
             formatted_prompt,
             return_tensors="pt",
             truncation=True,
-            max_length=self.config.context_window
+            max_length=settings.CONTEXT_WINDOW
         ).to(self.device)
         
         # Create streamer for token-by-token generation
@@ -165,19 +163,16 @@ class StreamingGenerator:
         # Create stopping criteria
         stopping_criteria = StoppingCriteriaList([StopOnTokens(stop_token_ids)])
         
-        # Use configured max_new_tokens (default 2048, can be increased)
-        max_tokens = self.config.max_new_tokens
-        
         # Generation parameters for Qwen 2.5
         # Two stopping conditions: stop tokens (via stopping_criteria) and max tokens (via max_new_tokens)
         generation_kwargs = {
             **inputs,
-            "max_new_tokens": max_tokens,
+            "max_new_tokens": settings.MAX_NEW_TOKENS,
             "eos_token_id": self.tokenizer.eos_token_id,
             "pad_token_id": self.tokenizer.pad_token_id or self.tokenizer.eos_token_id,
-            "temperature": self.config.temperature,
-            "top_p": self.config.top_p,
-            "repetition_penalty": self.config.repetition_penalty,
+            "temperature": settings.TEMPERATURE,
+            "top_p": settings.TOP_P,
+            "repetition_penalty": settings.REPETITION_PENALTY,
             "do_sample": True,
             "streamer": streamer,
             "use_cache": False,
@@ -194,7 +189,6 @@ class StreamingGenerator:
         
         # Stream tokens
         buffer = []
-        chunk_size = self.config.chunk_size
         
         try:
             # Read all tokens from streamer
@@ -202,15 +196,15 @@ class StreamingGenerator:
                 buffer.append(token)
                 
                 # Yield chunks when buffer is full
-                if len(buffer) >= chunk_size:
+                if len(buffer) >= settings.CHUNK_SIZE:
                     chunk = "".join(buffer)
                     buffer.clear()
                     yield chunk
                     
                     # Add delay if configured
                     # Note: delay is minimal and shouldn't cause issues
-                    if self.config.delay_ms > 0:
-                        await asyncio.sleep(self.config.delay_ms / 1000.0)
+                    if settings.DELAY_MS > 0:
+                        await asyncio.sleep(settings.DELAY_MS / 1000.0)
             
             # Always yield remaining tokens, even if buffer is not full
             # This ensures all tokens are sent even for short responses
@@ -276,7 +270,7 @@ class StreamingGenerator:
             formatted_prompt,
             return_tensors="pt",
             truncation=True,
-            max_length=self.config.context_window
+            max_length=settings.CONTEXT_WINDOW
         ).to(self.device)
         
         # Get stop tokens
@@ -285,19 +279,16 @@ class StreamingGenerator:
         # Create stopping criteria
         stopping_criteria = StoppingCriteriaList([StopOnTokens(stop_token_ids)])
         
-        # Use configured max_new_tokens (default 2048, can be increased)
-        max_tokens = self.config.max_new_tokens
-        
         # Generate
         with torch.no_grad():
             outputs = self.model.generate(
                 **inputs,
-                max_new_tokens=max_tokens,
+                max_new_tokens=settings.MAX_NEW_TOKENS,
                 eos_token_id=self.tokenizer.eos_token_id,
                 pad_token_id=self.tokenizer.pad_token_id or self.tokenizer.eos_token_id,
-                temperature=self.config.temperature,
-                top_p=self.config.top_p,
-                repetition_penalty=self.config.repetition_penalty,
+                temperature=settings.TEMPERATURE,
+                top_p=settings.TOP_P,
+                repetition_penalty=settings.REPETITION_PENALTY,
                 do_sample=True,
                 use_cache=False,
                 stopping_criteria=stopping_criteria
@@ -334,9 +325,8 @@ class InferenceService:
         if self._generator is None:
             model = self.model_manager.get_model()
             tokenizer = self.model_manager.get_tokenizer()
-            config = self.model_manager.get_config()
             
-            self._generator = StreamingGenerator(model, tokenizer, config)
+            self._generator = StreamingGenerator(model, tokenizer)
         
         return self._generator
     

@@ -77,10 +77,25 @@ export const useAuth = () => {
   );
 
   /**
-   * Start guest session (no authentication required)
+   * Start guest session (creates temporary account)
    */
-  const startGuestSession = useCallback(() => {
-    dispatch(setGuestSession());
+  const startGuestSession = useCallback(async () => {
+    try {
+      dispatch(setAuthLoading(true));
+      dispatch(setAuthError(null));
+      const response = await authApi.createGuestSession();
+      dispatch(setGuestSession(response));
+      return { success: true };
+    } catch (err: unknown) {
+      const errorMessage =
+        (err as { response?: { data?: { error?: string }; message?: string }; message?: string })?.response?.data?.error ||
+        (err as { message?: string })?.message ||
+        'Failed to create guest session';
+      dispatch(setAuthError(errorMessage));
+      return { success: false, error: errorMessage };
+    } finally {
+      dispatch(setAuthLoading(false));
+    }
   }, [dispatch]);
 
   /**

@@ -58,6 +58,7 @@ func SetupRouter(a *App, deps *Dependencies) *gin.Engine {
 			auth.POST("/login", deps.AuthHandler.Login)
 			auth.POST("/refresh", deps.AuthHandler.RefreshToken)
 			auth.POST("/logout", deps.AuthHandler.Logout)
+			auth.POST("/guest", deps.AuthHandler.CreateGuestSession)
 		}
 
 		// Protected routes (require authentication)

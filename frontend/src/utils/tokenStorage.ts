@@ -13,10 +13,10 @@ export const saveAccessToken = (token: string): void => {
 };
 
 /**
- * Get access token from localStorage
+ * Get access token from localStorage or sessionStorage
  */
 export const getAccessToken = (): string | null => {
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
+  return localStorage.getItem(ACCESS_TOKEN_KEY) || sessionStorage.getItem(ACCESS_TOKEN_KEY);
 };
 
 /**
@@ -27,18 +27,20 @@ export const saveRefreshToken = (token: string): void => {
 };
 
 /**
- * Get refresh token from localStorage
+ * Get refresh token from localStorage or sessionStorage
  */
 export const getRefreshToken = (): string | null => {
-  return localStorage.getItem(REFRESH_TOKEN_KEY);
+  return localStorage.getItem(REFRESH_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY);
 };
 
 /**
- * Remove all tokens from localStorage
+ * Remove all tokens from localStorage and sessionStorage
  */
 export const clearTokens = (): void => {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
+  sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+  sessionStorage.removeItem(REFRESH_TOKEN_KEY);
 };
 
 /**

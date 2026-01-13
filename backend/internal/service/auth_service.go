@@ -197,3 +197,57 @@ func (s *AuthService) ValidateToken(tokenString string) (*jwt.Claims, error) {
 func (s *AuthService) GetJWTManager() *jwt.Manager {
 	return s.jwtMgr
 }
+
+// CreateGuestSession creates a temporary guest account
+func (s *AuthService) CreateGuestSession() (*dto.GuestSessionResponse, error) {
+	// Generate unique guest credentials
+	guestID := "guest_" + time.Now().Format("20060102150405") + "_" + utils.GenerateRandomString(8)
+	guestEmail := guestID + "@guest.local"
+
+	// Generate random password for guest (not used, but required by schema)
+	randomPassword, err := utils.HashPassword(utils.GenerateRandomString(32))
+	if err != nil {
+		return nil, err
+	}
+
+	// Set expiration to 24 hours from now
+	expiresAt := time.Now().Add(24 * time.Hour)
+
+	// Create guest user
+	user := &model.User{
+		Email:        guestEmail,
+		Username:     guestID,
+		PasswordHash: randomPassword,
+		IsActive:     true,
+		IsGuest:      true,
+		ExpiresAt:    &expiresAt,
+	}
+
+	if err := s.userRepo.Create(user); err != nil {
+		return nil, err
+	}
+
+	// Generate tokens
+	accessToken, err := s.jwtMgr.GenerateAccessToken(user.ID, user.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken, err := s.jwtMgr.GenerateRefreshToken(user.ID, user.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.GuestSessionResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		TokenType:    "Bearer",
+		ExpiresIn:    int(s.cfg.JWT.AccessTokenExpiry.Seconds()),
+		GuestID:      user.ID.String(),
+	}, nil
+}
+
+// CleanupExpiredGuests removes expired guest accounts
+func (s *AuthService) CleanupExpiredGuests() error {
+	return s.userRepo.DeleteExpiredGuests()
+}

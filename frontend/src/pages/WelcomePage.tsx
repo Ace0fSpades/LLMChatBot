@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
@@ -10,13 +11,21 @@ export const WelcomePage = () => {
   const navigate = useNavigate();
   const { startGuestSession } = useAuth();
   const { t } = useTranslation();
+  const [guestLoading, setGuestLoading] = useState(false);
 
   /**
    * Handle guest session start
    */
-  const handleGuestSession = () => {
-    startGuestSession();
-    navigate('/chat');
+  const handleGuestSession = async () => {
+    setGuestLoading(true);
+    try {
+      const result = await startGuestSession();
+      if (result.success) {
+        navigate('/chat');
+      }
+    } finally {
+      setGuestLoading(false);
+    }
   };
 
   return (
@@ -61,8 +70,9 @@ export const WelcomePage = () => {
             <button
               onClick={handleGuestSession}
               className={`btn-primary ${styles['welcome-btn']} ${styles['guest-btn']}`}
+              disabled={guestLoading}
             >
-              {t('welcome.useGuestAccount')}
+              {guestLoading ? t('common.loading') : t('welcome.useGuestAccount')}
             </button>
           </div>
         </div>

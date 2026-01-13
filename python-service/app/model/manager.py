@@ -3,7 +3,7 @@ Model Manager - handles model loading, caching, and tokenization
 """
 import logging
 import torch
-from typing import Optional, Dict, Any
+from typing import Optional, Any
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -11,7 +11,6 @@ from transformers import (
 )
 
 from app.config import settings
-from app.config.model_config import ModelConfig
 
 logger = logging.getLogger(__name__)
 
@@ -32,13 +31,11 @@ class ModelManager:
         # Initialize instance variables
         self._model: Optional[Any] = None
         self._tokenizer: Optional[Any] = None
-        self._config: Optional[ModelConfig] = None
         self._device: Optional[str] = None
         
         # Initialize only once (prevent re-initialization)
         if not ModelManager._initialized:
             try:
-                self._config = ModelConfig()
                 self._device = self._determine_device()
                 ModelManager._initialized = True
             except Exception as e:
@@ -78,8 +75,8 @@ class ModelManager:
             logger.info("Model already loaded")
             return
         
-        logger.info(f"Loading model: {self._config.model_name}")
-        logger.info(f"Device: {self._device}, Quantization: {self._config.quantization}")
+        logger.info(f"Loading model: {settings.MODEL_NAME}")
+        logger.info(f"Device: {self._device}, Quantization: {settings.QUANTIZATION}")
         
         try:
             # Load tokenizer
@@ -88,7 +85,7 @@ class ModelManager:
                 tokenizer_kwargs["token"] = settings.HUGGINGFACE_TOKEN
             
             self._tokenizer = AutoTokenizer.from_pretrained(
-                self._config.model_name,
+                settings.MODEL_NAME,
                 trust_remote_code=True,
                 **tokenizer_kwargs
             )
@@ -100,11 +97,11 @@ class ModelManager:
             # Configure quantization if needed
             # For 7B model: use 4bit quantization with bfloat16 for better quality/speed
             quantization_config = None
-            if self._config.quantization == "4bit":
+            if settings.QUANTIZATION == "4bit":
                 # Determine compute dtype based on config
-                if self._config.dtype == "bfloat16":
+                if settings.DTYPE == "bfloat16":
                     compute_dtype = torch.bfloat16
-                elif self._config.dtype == "float16":
+                elif settings.DTYPE == "float16":
                     compute_dtype = torch.float16
                 else:
                     compute_dtype = torch.float16
@@ -115,7 +112,7 @@ class ModelManager:
                     bnb_4bit_use_double_quant=True,
                     bnb_4bit_quant_type="nf4"
                 )
-            elif self._config.quantization == "8bit":
+            elif settings.QUANTIZATION == "8bit":
                 quantization_config = BitsAndBytesConfig(
                     load_in_8bit=True
                 )
@@ -133,15 +130,15 @@ class ModelManager:
                 model_kwargs["quantization_config"] = quantization_config
             else:
                 # Set dtype if not quantized
-                if self._config.dtype == "float16":
+                if settings.DTYPE == "float16":
                     model_kwargs["torch_dtype"] = torch.float16
-                elif self._config.dtype == "bfloat16":
+                elif settings.DTYPE == "bfloat16":
                     model_kwargs["torch_dtype"] = torch.bfloat16
                 else:
                     model_kwargs["torch_dtype"] = torch.float32
             
             self._model = AutoModelForCausalLM.from_pretrained(
-                self._config.model_name,
+                settings.MODEL_NAME,
                 **model_kwargs
             )
             
@@ -197,14 +194,14 @@ class ModelManager:
         """
         return self._device
     
-    def get_config(self) -> ModelConfig:
+    def get_settings(self):
         """
-        Get model configuration
+        Get application settings
         
         Returns:
-            ModelConfig instance
+            Settings instance
         """
-        return self._config
+        return settings
     
     def unload_model(self) -> None:
         """

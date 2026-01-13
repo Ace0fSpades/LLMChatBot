@@ -14,6 +14,7 @@ import { ArchivedChatItem } from './ArchivedChatItem';
 import { LoadingSpinner } from '@/components/common';
 import { useArchivedChatsSelectors } from './ArchivedChats.selectors';
 import { handleError } from '@/utils/errorHandler';
+import { useTranslation } from 'react-i18next';
 import styles from './ArchivedChats.module.scss';
 
 /**

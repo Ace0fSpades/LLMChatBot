@@ -77,3 +77,14 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	// For now, we just return success
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
 }
+
+// CreateGuestSession creates a temporary guest account
+func (h *AuthHandler) CreateGuestSession(c *gin.Context) {
+	response, err := h.authService.CreateGuestSession()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, response)
+}
